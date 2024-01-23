@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 
@@ -52,6 +51,21 @@ class MailDeliverySettingsCreateView(CreateView):
     model = MailDeliverySettings
     form_class = MailDeliverySettingsForm
     success_url = reverse_lazy('main:newsletter_list')
+
+    # def form_valid(self, form):
+    #     if form.is_valid():
+    #         clients = Client.objects.values_list('email')
+    #         response = send_mail(
+    #             subject='Пробное',
+    #             message='Привет',
+    #             from_email=EMAIL_HOST_USER,
+    #             recipient_list=('stanislav.vasilchenko@mm.ru',),
+    #             fail_silently=False,
+    #         )
+    #         print(response)
+    #         self.object.status = MailDeliverySettings.LAUNCHED
+    #         self.object.save()
+    #     return super().form_valid(form)
 
 
 class MailDeliverySettingsDetailView(DetailView):
