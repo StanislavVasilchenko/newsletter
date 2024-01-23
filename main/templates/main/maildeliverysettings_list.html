@@ -13,6 +13,7 @@
             <th scope="col">Название рассылки</th>
             <th scope="col">Сообщение</th>
             <th scope="col">Статус</th>
+            <th scope="col">Логи</th>
         </tr>
         </thead>
         <tbody>
@@ -23,6 +24,7 @@
                 <td><a href="{% url 'main:newsletter_detail' object.pk %}">{{ object.name }}</a></td>
                 <td>{{ object.message }}</td>
                 <td>{{ object.status }}</td>
+                <td><a href="{% url 'main:log_list' object.pk %}" >Логи</td>
 
             </tr>
         {% endfor %}

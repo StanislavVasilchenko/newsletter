@@ -42,9 +42,36 @@ class MailDeliverySettings(models.Model):
     subject = models.CharField(max_length=255, verbose_name='Тема письма')
     message = models.TextField(verbose_name='Тело письма')
 
+    # log = models.ForeignKey(to=Log, on_delete=models.CASCADE, verbose_name='Лог', blank=True, null=True)
+
     def __str__(self):
         return f'{self.status} - ({self.subject})'
 
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+
+
+class Log(models.Model):
+    SUCCESS = 'Успешно'
+    FAIL = 'Ошибка отправки'
+
+    OK = 'ok'
+
+    ATTEMPT_STATUS = [
+        (SUCCESS, 'Успешно'),
+        (FAIL, 'Ошибка отправки')
+    ]
+
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата попытки')
+    status = models.CharField(default=SUCCESS, choices=ATTEMPT_STATUS, max_length=50, verbose_name='Статус попытки')
+    answer = models.TextField(default=OK, verbose_name='Ответ сервера')
+
+    newsletter = models.ForeignKey(MailDeliverySettings, on_delete=models.CASCADE, verbose_name='Рассылка')
+
+    def __str__(self):
+        return f'{self.status} - ({self.answer})'
+
+    class Meta:
+        verbose_name = 'Лог'
+        verbose_name_plural = 'Логи'

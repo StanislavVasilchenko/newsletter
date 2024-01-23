@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Дата</th>
+            <th scope="col">Статус попытки</th>
+            <th scope="col">Ответ сервера</th>
+            <th scope="col">Рассылка</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ object.date|date:'d.m.Y'}} {{object.date|time:'H:i' }}</td>
+                <td>{{ object.status }}</td>
+                <td>{{ object.answer }}</td>
+                <td>{{ object.newsletter.name }}</td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
