@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    <p class="d-inline-flex gap-1">
+        <a class="btn btn-success" href="{% url 'main:newsletter_create' %}">
+            Добавить рассылку
+        </a>
+    </p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название рассылки</th>
+            <th scope="col">Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="{% url 'main:newsletter_detail' object.pk %}">{{ object.name }}</a></td>
+                <td>{{ object.status }}</td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

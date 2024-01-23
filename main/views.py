@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 
-from main.forms import ClientForm
-from main.models import Client
+from main.forms import ClientForm, MailDeliverySettingsForm
+from main.models import Client, MailDeliverySettings
 
 
 class IndexView(TemplateView):
@@ -42,3 +42,30 @@ class ClientUpdateView(UpdateView):
 class ClientDeleteView(DeleteView):
     model = Client
     success_url = reverse_lazy('main:client_list')
+
+
+class MailDeliverySettingsListView(ListView):
+    model = MailDeliverySettings
+
+
+class MailDeliverySettingsCreateView(CreateView):
+    model = MailDeliverySettings
+    form_class = MailDeliverySettingsForm
+    success_url = reverse_lazy('main:newsletter_list')
+
+
+class MailDeliverySettingsDetailView(DetailView):
+    model = MailDeliverySettings
+
+
+class MailDeliverySettingsUpdateView(UpdateView):
+    model = MailDeliverySettings
+    form_class = MailDeliverySettingsForm
+
+    def get_success_url(self):
+        return reverse('main:newsletter_detail', args=[self.kwargs.get('pk')])
+
+
+class MailDeliverySettingsDeleteView(DeleteView):
+    model = MailDeliverySettings
+    success_url = reverse_lazy('main:newsletter_list')

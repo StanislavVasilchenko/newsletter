@@ -1,0 +1,35 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название рассылки</th>
+            <th scope="col">Начало</th>
+            <th scope="col">Окончание</th>
+            <th scope="col">Периодичность</th>
+            <th scope="col">Тема письма</th>
+            <th scope="col">Сообщение</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ object.name }}</td>
+            <td>{{ object.time_start }}</td>
+            <td>{{ object.time_stop }}</td>
+            <td>{{ object.periodicity }}</td>
+            <td>{{ object.subject }}</td>
+            <td>{{ object.message }}</td>
+            <td><a href="{% url 'main:newsletter_update' object.pk %}">Изменить</a></td>
+            <td><a href="{% url 'main:newsletter_delete' object.pk %}">Удалить</a></td>
+
+        </tr>
+
+        </tbody>
+    </table>
+
+{% endblock %}
