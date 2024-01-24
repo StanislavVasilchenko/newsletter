@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
@@ -5,6 +6,8 @@ from django.views.generic import TemplateView, CreateView, UpdateView, ListView,
 
 from main.forms import ClientForm, MailDeliverySettingsForm
 from main.models import Client, MailDeliverySettings, Log
+from main.services import get_client_counts, get_newsletter_counts, get_active_newsletters_count, \
+    get_create_newsletters_count, get_ended_newsletters_count
 
 
 class IndexView(TemplateView):
@@ -13,26 +16,43 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data()
-        count = Client.objects.count()
-        context_data['count'] = count
-        return context_data
+        user = self.request.user
+        if user.is_authenticated:
+            context_data['client_count'] = get_client_counts(user)
+            context_data['newsletter_count'] = get_newsletter_counts(user)
+            context_data['active_newsletters_count'] = get_active_newsletters_count(user)
+            context_data['create_newsletters_count'] = get_create_newsletters_count(user)
+            context_data['ended_newsletters_count'] = get_ended_newsletters_count(user)
+            return context_data
 
 
-class ClientCreateView(CreateView):
+class ClientCreateView(LoginRequiredMixin, CreateView):
     model = Client
     form_class = ClientForm
     success_url = reverse_lazy('main:index')
 
+    def form_valid(self, form):
+        new_client = form.save()
+        new_client.user = self.request.user
+        new_client.save()
+        return super().form_valid(form)
 
-class ClientListView(ListView):
+
+class ClientListView(LoginRequiredMixin, ListView):
+    model = Client
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        user = self.request.user
+        context_data['object_list'] = Client.objects.filter(user_id=user)
+        return context_data
+
+
+class ClientDetailView(LoginRequiredMixin, DetailView):
     model = Client
 
 
-class ClientDetailView(DetailView):
-    model = Client
-
-
-class ClientUpdateView(UpdateView):
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
     form_class = ClientForm
 
@@ -40,19 +60,31 @@ class ClientUpdateView(UpdateView):
         return reverse('main:client_detail', args=[self.kwargs.get('pk')])
 
 
-class ClientDeleteView(DeleteView):
+class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     success_url = reverse_lazy('main:client_list')
 
 
-class MailDeliverySettingsListView(ListView):
+class MailDeliverySettingsListView(LoginRequiredMixin, ListView):
     model = MailDeliverySettings
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        user = self.request.user
+        context_data['object_list'] = MailDeliverySettings.objects.filter(user_id=user)
+        return context_data
 
-class MailDeliverySettingsCreateView(CreateView):
+
+class MailDeliverySettingsCreateView(LoginRequiredMixin, CreateView):
     model = MailDeliverySettings
     form_class = MailDeliverySettingsForm
     success_url = reverse_lazy('main:newsletter_list')
+
+    def form_valid(self, form):
+        new_newsletter = form.save()
+        new_newsletter.user = self.request.user
+        new_newsletter.save()
+        return super().form_valid(form)
 
     # def form_valid(self, form):
     #     if form.is_valid():

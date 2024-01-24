@@ -1,10 +1,14 @@
 from django.db import models
 
+from users.models import User
+
 
 class Client(models.Model):
     full_name = models.CharField(max_length=250, verbose_name='Полное имя')
     email = models.EmailField(max_length=150, verbose_name='эл.почта')
     comment = models.TextField(verbose_name='Комментарий', blank=True, null=True)
+
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name='Пользователь', blank=True, null=True)
 
     def __str__(self):
         return f'{self.full_name} ({self.email})'
@@ -42,7 +46,7 @@ class MailDeliverySettings(models.Model):
     subject = models.CharField(max_length=255, verbose_name='Тема письма')
     message = models.TextField(verbose_name='Тело письма')
 
-    # log = models.ForeignKey(to=Log, on_delete=models.CASCADE, verbose_name='Лог', blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', blank=True, null=True)
 
     def __str__(self):
         return f'{self.status} - ({self.subject})'

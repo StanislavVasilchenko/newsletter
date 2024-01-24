@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, TemplateView
@@ -14,16 +15,17 @@ class UserRegistrationView(CreateView):
     success_url = reverse_lazy('users:verify')
 
     def form_valid(self, form):
-        verify_key = generate_verify_key
+        verify_key = generate_verify_key()
+        print(verify_key)
         new_user = form.save()
         new_user.verify_key = verify_key
         new_user.save()
-        send_verify_key_to_email(new_user.email, verify_key)
+        # send_verify_key_to_email(new_user.email, verify_key)
 
         return super().form_valid(form)
 
 
-class UserProfileView(UpdateView):
+class UserProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')

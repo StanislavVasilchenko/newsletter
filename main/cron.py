@@ -6,7 +6,7 @@ from django.utils import timezone
 
 def send(deliver: MailDeliverySettings):
     time_now = timezone.localtime(timezone.now())
-    clients = Client.objects.values_list('email')
+    clients = Client.objects.filter(user_id=deliver.user).values_list('email')
     if deliver.time_start <= time_now <= deliver.time_stop:
         for recipient in clients:
             try:
