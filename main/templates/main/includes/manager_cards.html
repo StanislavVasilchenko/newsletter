@@ -1,0 +1,10 @@
+<h1 class="card-title pricing-card-title"><small
+        class="text-body-secondary fw-light">{{ newsletter_count }}</small></h1>
+<ul class="list-unstyled mt-3 mb-4">
+    <li>Отчет:</li>
+    <li>Активные - {{ active_newsletters_count }}</li>
+    <li>Запланированные - {{ create_newsletters_count }}</li>
+    <li>Завершенные - {{ ended_newsletters_count }}</li>
+</ul>
+<a href="{% url 'main:newsletter_list' %}" type="button"
+   class="w-100 btn btn-lg btn-primary">К рассылкам</a>

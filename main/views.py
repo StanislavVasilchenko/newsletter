@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
@@ -6,8 +6,7 @@ from django.views.generic import TemplateView, CreateView, UpdateView, ListView,
 
 from main.forms import ClientForm, MailDeliverySettingsForm
 from main.models import Client, MailDeliverySettings, Log
-from main.services import get_client_counts, get_newsletter_counts, get_active_newsletters_count, \
-    get_create_newsletters_count, get_ended_newsletters_count
+from main.services import  get_context_data_for_user, get_context_data_for_manager
 
 
 class IndexView(TemplateView):
@@ -17,13 +16,11 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data()
         user = self.request.user
-        if user.is_authenticated:
-            context_data['client_count'] = get_client_counts(user)
-            context_data['newsletter_count'] = get_newsletter_counts(user)
-            context_data['active_newsletters_count'] = get_active_newsletters_count(user)
-            context_data['create_newsletters_count'] = get_create_newsletters_count(user)
-            context_data['ended_newsletters_count'] = get_ended_newsletters_count(user)
-            return context_data
+        if user.is_authenticated and not user.is_staff:
+            context_data.update(get_context_data_for_user(user))
+        elif user.is_staff:
+            context_data.update(get_context_data_for_manager())
+        return context_data
 
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
@@ -44,7 +41,10 @@ class ClientListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         user = self.request.user
-        context_data['object_list'] = Client.objects.filter(user_id=user)
+        if user.is_authenticated and not user.is_staff:
+            context_data['object_list'] = Client.objects.filter(user_id=user)
+        elif user.is_staff:
+            context_data['object_list'] = Client.objects.all()
         return context_data
 
 
@@ -71,7 +71,10 @@ class MailDeliverySettingsListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         user = self.request.user
-        context_data['object_list'] = MailDeliverySettings.objects.filter(user_id=user)
+        if user.is_staff:
+            context_data['object_list'] = MailDeliverySettings.objects.all()
+        else:
+            context_data['object_list'] = MailDeliverySettings.objects.filter(user_id=user)
         return context_data
 
 

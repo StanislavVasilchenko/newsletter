@@ -19,3 +19,9 @@ class UserProfileForm(UserChangeForm):
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name', 'phone_number', 'avatar',)
+
+
+class ManagerViewForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'
