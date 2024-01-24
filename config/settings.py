@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'main',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,8 @@ CRONJOBS = [
     # ('0 9 * * 1', 'main.cron..make_newsletter_week'),
     ('*/1 * * * *', 'main.cron.make_newsletter_hour'),
 ]
+
+AUTH_USER_MODEL = 'users.User'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'users:login'
