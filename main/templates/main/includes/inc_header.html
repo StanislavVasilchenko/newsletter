@@ -12,8 +12,10 @@
             <a class="btn btn-primary" href="{% url 'main:newsletter_list' %}">Рассылки</a>
             <a class="btn btn-primary" href="#">Блог</a>
             <a class="btn btn-primary" href="{% url 'users:logout' %}">Выход</a>
+            <a class="btn btn-primary" href="{% url 'users:profile' %}">Профиль</a>
             {% else %}
                 <a class="btn btn-primary" href="{% url 'users:login' %}">Вход</a>
+                <a class="btn btn-primary" href="{% url 'users:registration' %}">Регистрация</a>
             {% endif %}
         </nav>
 
