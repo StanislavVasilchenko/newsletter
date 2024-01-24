@@ -1,13 +1,10 @@
-import random
-
-from django.contrib.auth.forms import UserChangeForm
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, TemplateView
 
 from users.forms import UserRegistrationForm, UserProfileForm
 from users.models import User
-from users.services import send_verify_key_to_email
+from users.services import send_verify_key_to_email, generate_verify_key
 
 
 class UserRegistrationView(CreateView):
@@ -17,7 +14,7 @@ class UserRegistrationView(CreateView):
     success_url = reverse_lazy('users:verify')
 
     def form_valid(self, form):
-        verify_key = ''.join([str(random.randint(0, 9)) for i in range(12)])
+        verify_key = generate_verify_key
         new_user = form.save()
         new_user.verify_key = verify_key
         new_user.save()
