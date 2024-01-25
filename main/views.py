@@ -14,7 +14,7 @@ class UserPassesMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
         newsletter = self.get_object()
-        if newsletter.user == user:
+        if newsletter.user == user and user.is_active:
             return True
         else:
             return False
@@ -89,7 +89,7 @@ class MailDeliverySettingsListView(LoginRequiredMixin, ListView):
         return context_data
 
 
-class MailDeliverySettingsCreateView(LoginRequiredMixin, UserPassesMixin, CreateView):
+class MailDeliverySettingsCreateView(LoginRequiredMixin, CreateView):
     model = MailDeliverySettings
     form_class = MailDeliverySettingsForm
     success_url = reverse_lazy('main:newsletter_list')
@@ -137,21 +137,6 @@ class MailDeliverySettingsUpdateView(LoginRequiredMixin, UserPassesMixin, Update
 
     def get_success_url(self):
         return reverse('main:newsletter_detail', args=[self.kwargs.get('pk')])
-
-    # def test_func(self):
-    #     user = self.request.user
-    #     newsletter = self.get_object()
-    #     if newsletter.user == user:
-    #         return True
-    #     else:
-    #         return False
-
-
-    # def get_form_class(self):
-    #     if self.request.user.groups.filter(name='manager').exists():
-    #         return MailDeliverySettingsManagerForm
-    #     else:
-    #         return MailDeliverySettingsForm
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)

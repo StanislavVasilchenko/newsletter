@@ -30,9 +30,9 @@
                 <td>{{ object.message }}</td>
                 <td>{{ object.status }}</td>
                 {% if user.is_staff %}
-                    <td><a href="#">{{ object.user }}</td>
+                    <td><a href="{% url 'users:detail'%}">{{ object.user }}</a></td>
                 {% endif %}
-                <td><a href="{% url 'main:log_list' object.pk %}">Логи</td>
+                <td><a href="{% url 'main:log_list' object.pk %}">Логи</a></td>
 
             </tr>
         {% endfor %}

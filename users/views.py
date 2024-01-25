@@ -1,7 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse_lazy, reverse
+from django.views.generic import CreateView, UpdateView, TemplateView, DetailView, ListView
 
 from users.forms import UserRegistrationForm, UserProfileForm
 from users.models import User
@@ -28,7 +28,7 @@ class UserRegistrationView(CreateView):
 class UserProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
-    success_url = reverse_lazy('users:profile')
+    success_url = reverse_lazy('users:detail')
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -46,3 +46,38 @@ class UserVerifyView(TemplateView):
             user.save()
             return redirect('users:login')
         return render(request, 'users/verify_err.html')
+
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    model = User
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class UserListView(UserPassesTestMixin, ListView):
+    model = User
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = User.objects.filter(is_staff=False)
+        return context_data
+
+    def test_func(self):
+        user = self.request.user
+        if user.groups.filter(name='manager').exists():
+            return True
+        else:
+            return False
+
+
+def user_activity(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+
+    user.save()
+
+    return redirect(reverse('users:view_users'))

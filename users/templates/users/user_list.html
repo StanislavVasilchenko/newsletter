@@ -1,0 +1,43 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    {#    <p class="d-inline-flex gap-1">#}
+    {#        <a class="btn btn-success"  href="{% url 'main:create_client' %}" >#}
+    {#            Добавить клиента#}
+    {#        </a>#}
+    {#    </p>#}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">ФИО</th>
+            <th scope="col">email</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Изменить статус</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ object.first_name }} {{ object.last_name }}</td>
+                <td>{{ object.email }}</td>
+                <td>{{ object.phone_number }}</td>
+                <td>{{ object.is_active }}</td>
+                {% if object.is_active %}
+                    <td><a class="btn btn-danger"
+                            href="{% url 'users:user_active' object.pk %}">Деактивировать</a></td>
+                {% else %}
+                    <td><a class="btn btn-success"
+                            href="{% url 'users:user_active' object.pk %}">Активиоровать</a></td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

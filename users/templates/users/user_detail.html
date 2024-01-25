@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ФИО</th>
+            <th scope="col">email</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Фото</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ object.first_name }} {{ object.last_name }}</td>
+            <td>{{ object.email }}</td>
+            {% if object.phone_number %}
+                <td>{{ object.phone_number }}</td>
+            {% else %}
+                <td>Не указан</td>
+            {% endif %}
+            <td><img src="/media/{{ object.avatar }}" alt="Card image app"></td>
+            {% if not user.is_staff %}
+                <td><a href="{% url 'users:profile' %}">Изменить</a></td>
+                <td><a href="#">Удалить</a></td>
+            {% endif %}
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
