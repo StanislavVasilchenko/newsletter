@@ -1,4 +1,6 @@
 from django.core.mail import send_mail
+from django.db.models import Q
+
 from main.models import MailDeliverySettings, Client, Log
 from config.settings import EMAIL_HOST_USER
 from django.utils import timezone
@@ -7,7 +9,7 @@ from django.utils import timezone
 def send(deliver: MailDeliverySettings):
     time_now = timezone.localtime(timezone.now())
     clients = Client.objects.filter(user_id=deliver.user).values_list('email')
-    if deliver.time_start <= time_now <= deliver.time_stop:
+    if deliver.time_start <= time_now <= deliver.time_stop and deliver.status != 'Завершена':
         for recipient in clients:
             try:
                 send_mail(

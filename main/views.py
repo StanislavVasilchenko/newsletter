@@ -1,12 +1,23 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 
-from main.forms import ClientForm, MailDeliverySettingsForm
+from main.forms import ClientForm, MailDeliverySettingsForm, MailDeliverySettingsManagerForm
 from main.models import Client, MailDeliverySettings, Log
-from main.services import  get_context_data_for_user, get_context_data_for_manager
+from main.services import get_context_data_for_user, get_context_data_for_manager
+
+
+class UserPassesMixin(UserPassesTestMixin):
+    def test_func(self):
+        user = self.request.user
+        newsletter = self.get_object()
+        if newsletter.user == user:
+            return True
+        else:
+            return False
 
 
 class IndexView(TemplateView):
@@ -48,11 +59,11 @@ class ClientListView(LoginRequiredMixin, ListView):
         return context_data
 
 
-class ClientDetailView(LoginRequiredMixin, DetailView):
+class ClientDetailView(LoginRequiredMixin, UserPassesMixin, DetailView):
     model = Client
 
 
-class ClientUpdateView(LoginRequiredMixin, UpdateView):
+class ClientUpdateView(LoginRequiredMixin, UserPassesMixin, UpdateView):
     model = Client
     form_class = ClientForm
 
@@ -60,7 +71,7 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
         return reverse('main:client_detail', args=[self.kwargs.get('pk')])
 
 
-class ClientDeleteView(LoginRequiredMixin, DeleteView):
+class ClientDeleteView(LoginRequiredMixin, UserPassesMixin, DeleteView):
     model = Client
     success_url = reverse_lazy('main:client_list')
 
@@ -78,7 +89,7 @@ class MailDeliverySettingsListView(LoginRequiredMixin, ListView):
         return context_data
 
 
-class MailDeliverySettingsCreateView(LoginRequiredMixin, CreateView):
+class MailDeliverySettingsCreateView(LoginRequiredMixin, UserPassesMixin, CreateView):
     model = MailDeliverySettings
     form_class = MailDeliverySettingsForm
     success_url = reverse_lazy('main:newsletter_list')
@@ -107,28 +118,50 @@ class MailDeliverySettingsCreateView(LoginRequiredMixin, CreateView):
     #     return super().form_valid(form)
 
 
-class MailDeliverySettingsDetailView(DetailView):
+class MailDeliverySettingsDetailView(LoginRequiredMixin, UserPassesMixin, DetailView):
     model = MailDeliverySettings
 
+    def test_func(self):
+        user = self.request.user
+        newsletter = self.get_object()
+        if user.is_staff or newsletter.user == user:
+            return True
+        else:
+            return False
 
-class MailDeliverySettingsUpdateView(UpdateView):
+
+class MailDeliverySettingsUpdateView(LoginRequiredMixin, UserPassesMixin, UpdateView):
     model = MailDeliverySettings
+    permission_required = 'main.change_maildeliverysettings'
     form_class = MailDeliverySettingsForm
 
     def get_success_url(self):
         return reverse('main:newsletter_detail', args=[self.kwargs.get('pk')])
 
+    # def test_func(self):
+    #     user = self.request.user
+    #     newsletter = self.get_object()
+    #     if newsletter.user == user:
+    #         return True
+    #     else:
+    #         return False
+
+
+    # def get_form_class(self):
+    #     if self.request.user.groups.filter(name='manager').exists():
+    #         return MailDeliverySettingsManagerForm
+    #     else:
+    #         return MailDeliverySettingsForm
+
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
         now = timezone.localtime(timezone.now())
         if self.object.time_start < now:
-            self.object.status = MailDeliverySettings.COMPLETED
-        else:
             self.object.status = MailDeliverySettings.CREATE
         return self.object
 
 
-class MailDeliverySettingsDeleteView(DeleteView):
+class MailDeliverySettingsDeleteView(LoginRequiredMixin, UserPassesMixin, DeleteView):
     model = MailDeliverySettings
     success_url = reverse_lazy('main:newsletter_list')
 
@@ -138,7 +171,17 @@ class LogListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        print(queryset)
         queryset = queryset.filter(newsletter_id=self.kwargs.get('pk'))
-        print(queryset)
         return queryset
+
+
+def newsletter_activity(request, pk):
+    newsletter = get_object_or_404(MailDeliverySettings, pk=pk)
+    if newsletter.status in [MailDeliverySettings.CREATE, MailDeliverySettings.LAUNCHED]:
+        newsletter.status = MailDeliverySettings.COMPLETED
+    else:
+        newsletter.status = MailDeliverySettings.CREATE
+
+    newsletter.save()
+
+    return redirect(reverse('main:newsletter_list'))

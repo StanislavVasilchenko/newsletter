@@ -36,3 +36,9 @@ class MailDeliverySettingsForm(forms.ModelForm):
     #     if time_start > time_stop:
     #         raise forms.ValidationError('Время окончания не может быть меньше времени начала')
     #     return cleaned_data
+
+
+class MailDeliverySettingsManagerForm(forms.ModelForm):
+    class Meta:
+        model = MailDeliverySettings
+        fields = ('status', 'name', 'user')

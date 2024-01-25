@@ -24,8 +24,22 @@
             <td>{{ object.periodicity }}</td>
             <td>{{ object.subject }}</td>
             <td>{{ object.message }}</td>
-            <td><a href="{% url 'main:newsletter_update' object.pk %}">Изменить</a></td>
-            <td><a href="{% url 'main:newsletter_delete' object.pk %}">Удалить</a></td>
+            {% if user == object.user %}
+                <td><a href="{% url 'main:newsletter_update' object.pk %}">Изменить</a></td>
+                <td><a href="{% url 'main:newsletter_delete' object.pk %}">Удалить</a></td>
+            {% elif user.is_staff %}
+                {% if object.status == 'Создана' %}
+                    <td>
+                        <a class="btn btn-danger"
+                           href="{% url 'main:activate' object.pk %}">Отключить</a>
+                    </td>
+                {% elif object.status == 'Завершена' %}
+                    <td>
+                        <a class="btn btn-success"
+                           href="{% url 'main:activate' object.pk %}">Включить</a>
+                    </td>
+                {% endif %}
+            {% endif %}
 
         </tr>
 
