@@ -3,7 +3,7 @@ from django.urls import path
 
 from users.apps import UsersConfig
 from users.views import UserRegistrationView, UserProfileView, UserVerifyView, UserDetailView, UserListView, \
-    user_activity
+    user_activity, UserDeleteView
 
 app_name = UsersConfig.name
 
@@ -16,4 +16,5 @@ urlpatterns = [
     path('detail/', UserDetailView.as_view(), name='detail'),
     path('view_users/', UserListView.as_view(), name='view_users'),
     path('user_active/<int:pk>', user_activity, name='user_active'),
+    path('user_delete/<int:pk>', UserDeleteView.as_view(), name='user_delete'),
 ]

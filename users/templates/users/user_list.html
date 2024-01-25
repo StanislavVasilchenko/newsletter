@@ -1,10 +1,5 @@
 {% extends 'main/base.html' %}
 {% block content %}
-    {#    <p class="d-inline-flex gap-1">#}
-    {#        <a class="btn btn-success"  href="{% url 'main:create_client' %}" >#}
-    {#            Добавить клиента#}
-    {#        </a>#}
-    {#    </p>#}
 
     <table class="table">
         <thead>
@@ -33,6 +28,10 @@
                 {% else %}
                     <td><a class="btn btn-success"
                             href="{% url 'users:user_active' object.pk %}">Активиоровать</a></td>
+                {% endif %}
+                {% if user.is_superuser %}
+                    <td><a class="btn btn-success"
+                            href="{% url 'users:user_delete' object.pk %}">Удалить</a></td>
                 {% endif %}
 
             </tr>

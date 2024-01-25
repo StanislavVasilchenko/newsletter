@@ -10,7 +10,7 @@ from blog.models import Blog
 class UserPassesMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
-        if user.groups.filter(name='content_manager').exists():
+        if user.groups.filter(name='content_manager').exists() or user.is_superuser:
             return True
         else:
             return False

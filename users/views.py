@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView, TemplateView, DetailView, ListView
+from django.views.generic import CreateView, UpdateView, TemplateView, DetailView, ListView, DeleteView
 
 from users.forms import UserRegistrationForm, UserProfileForm
 from users.models import User
@@ -65,7 +65,7 @@ class UserListView(UserPassesTestMixin, ListView):
 
     def test_func(self):
         user = self.request.user
-        if user.groups.filter(name='manager').exists():
+        if user.groups.filter(name='manager').exists() or user.is_superuser:
             return True
         else:
             return False
@@ -81,3 +81,15 @@ def user_activity(request, pk):
     user.save()
 
     return redirect(reverse('users:view_users'))
+
+
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = User
+    success_url = reverse_lazy('main:index')
+
+    def test_func(self):
+        user = self.request.user
+        if user.is_superuser:
+            return True
+        else:
+            return False
