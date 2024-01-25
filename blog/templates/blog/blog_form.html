@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Создать статью</div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+{#                        <input type="hidden" name="boat_id" value="{{ boat.pk }}">#}
+                        {{ form.as_p }}
+                        {% if object %}
+                            <button type="submit"  class="btn btn-success">Изменить</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success">Создать</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

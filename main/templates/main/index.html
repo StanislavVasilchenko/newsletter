@@ -4,7 +4,7 @@
 {% block content %}
     <div class="row text-center">
 
-        <div class="col-4">
+        <div class="col-6">
             <div class="card mb-4 rounded-3 shadow-sm border-primary">
                 <div class="card-header py-3 text-bg-primary border-primary">
                     <h4 class="my-0 fw-normal">Клиенты</h4>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-6">
             <div class="card mb-4 rounded-3 shadow-sm border-primary">
                 <div class="card-header py-3 text-bg-primary border-primary">
                     <h4 class="my-0 fw-normal">Рассылки</h4>
@@ -56,25 +56,24 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+    </div>
+    {% for blog in blog_list %}
+        <div class="col-12">
             <div class="card mb-4 rounded-3 shadow-sm border-primary">
                 <div class="card-header py-3 text-bg-primary border-primary">
-                    <h4 class="my-0 fw-normal">Блог</h4>
+                    <h4 class="my-0 fw-normal">{{ blog.title }}</h4>
                 </div>
                 <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$29<small
-                            class="text-body-secondary fw-light">/mo</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>30 users included</li>
-                        <li>15 GB of storage</li>
-                        <li>Phone and email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary">Contact us</button>
+                    <img src="/media/ {{ object.image }}" alt="hello">
+                    <p>{{ blog.content }}</p>
+                    <p>Количество просмотров - {{ blog.views }}</p>
+
+                    <a href="{% url 'blog:blog_detail' blog.id %}" type="button"
+                           class="w-100 btn btn-lg btn-primary">К статье</a>
                 </div>
             </div>
         </div>
-    </div>
+    {% endfor %}
 {% endblock %}
 
 

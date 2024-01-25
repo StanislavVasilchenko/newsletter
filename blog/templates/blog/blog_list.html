@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+
+
+{% block content %}
+    <div class="row text-center">
+    {% if perms.blog.add_blog %}
+    <p class="d-inline-flex gap-1">
+        <a class="btn btn-success"  href="{% url 'blog:blog_create' %}" >
+            Добавить статью
+        </a>
+    </p>
+    {% endif %}
+    {% for object in object_list %}
+        <div class="col-12">
+            <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                <div class="card-header py-3 text-bg-primary border-primary">
+                    <h4 class="my-0 fw-normal">{{ object.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <img src="/media/ {{ object.image }}" alt="hello">
+                    <p>{{ object.content }}</p>
+                    <a class="btn btn-primary"  href="{% url 'blog:blog_detail' object.pk %}">К статье</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}
+
+
