@@ -6,6 +6,7 @@ from config.settings import EMAIL_HOST_USER
 
 
 def send_verify_key_to_email(email, verify_key):
+    """Функция для отправки ключа верификации на указанный пользователем email"""
     send_mail(
         subject='Ваш ключ верификации',
         message=f'Вы зарегистрировались на нашей платформе. Ваш ключ верификации - {verify_key}',
@@ -15,5 +16,6 @@ def send_verify_key_to_email(email, verify_key):
 
 
 def generate_verify_key():
+    """Функция генерирующая ключ верификации"""
     key = ''.join([str(random.randint(0, 9)) for i in range(12)])
     return key

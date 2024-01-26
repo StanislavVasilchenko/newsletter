@@ -5,6 +5,7 @@ from users.models import User
 
 
 class Command(BaseCommand):
+    """Класс коммагды для создания суперпользователя (необходимо заполнение secret_key.py)"""
     def handle(self, *args, **options):
         user = User.objects.create(
             email=SUPER_USER,

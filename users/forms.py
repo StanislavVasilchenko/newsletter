@@ -6,12 +6,14 @@ from users.models import User
 
 
 class UserRegistrationForm(UserCreationForm):
+    """Класс формы для отображения полей при регистрации пользователя"""
     class Meta:
         model = User
         fields = ('email', 'password1', 'password2',)
 
 
 class UserProfileForm(UserChangeForm):
+    """Класс формы для изменения полей пользователя"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

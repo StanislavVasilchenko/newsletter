@@ -9,6 +9,8 @@ from users.services import send_verify_key_to_email, generate_verify_key
 
 
 class ManagerTestMixin(UserPassesTestMixin):
+    """Миксин для проверки пользователя, является ли он менеджером или суперпользователем"""
+
     def test_func(self):
         user = self.request.user
         if user.groups.filter(name='manager').exists() or user.is_superuser:
@@ -18,12 +20,14 @@ class ManagerTestMixin(UserPassesTestMixin):
 
 
 class UserRegistrationView(CreateView):
+    """Класс для регистрации пользователя."""
     model = User
     form_class = UserRegistrationForm
     template_name = 'users/registration.html'
     success_url = reverse_lazy('users:verify')
 
     def form_valid(self, form):
+        """Прирегистрации пользователя отправляется сгенерированный ключ верификации"""
         verify_key = generate_verify_key()
         new_user = form.save()
         new_user.verify_key = verify_key
@@ -34,6 +38,7 @@ class UserRegistrationView(CreateView):
 
 
 class UserProfileView(LoginRequiredMixin, UpdateView):
+    """Класс для изменения данных пользователя"""
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:detail')
@@ -43,10 +48,12 @@ class UserProfileView(LoginRequiredMixin, UpdateView):
 
 
 class UserVerifyView(TemplateView):
+    """Класс для верификации пользователя по введенному ключу"""
     template_name = 'users/verify.html'
 
     @staticmethod
     def post(request, *args, **kwargs):
+        """Функция проверки ввел ли пользователь верный ключ верификации отправленный на его email"""
         verify_key = request.POST.get('verify_key')
         user = User.objects.filter(verify_key=verify_key).first()
         if user is not None and user.verify_key == verify_key:
@@ -57,9 +64,11 @@ class UserVerifyView(TemplateView):
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
+    """Класс для просмотра информации о пользователи"""
     model = User
 
     def get_object(self, queryset=None):
+        """Функция для определения какой пользователь пытается изменить данные"""
         user = self.request.user
         if user.groups.filter(name='manager').exists():
             return User.objects.filter(email=self.request.GET.get('email')).first()
@@ -67,20 +76,25 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
 
 class UserListView(ManagerTestMixin, ListView):
+    """Класс для отображения списка пользователей"""
     model = User
 
     def get_context_data(self, **kwargs):
+        """Функция которая передает в контекст только пользователей не являющихся персоналом или
+        суперпользователем"""
         context_data = super().get_context_data(**kwargs)
         context_data['object_list'] = User.objects.filter(is_staff=False)
         return context_data
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(id=self.kwargs.get('pk'))
-        return queryset
+    # def get_queryset(self):
+    #     """Функция для фильтрации запроса в БД"""
+    #     queryset = super().get_queryset()
+    #     queryset = queryset.filter(id=self.kwargs.get('pk'))
+    #     return queryset
 
 
 def user_activity(request, pk):
+    """Функция для изменения поля is_active в True или False. Доступна только пользователю из группы manager"""
     user = get_object_or_404(User, pk=pk)
     if user.is_active:
         user.is_active = False
@@ -93,10 +107,12 @@ def user_activity(request, pk):
 
 
 class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Класс для удаления пользователя из системы. Доступна только суперпользователю"""
     model = User
     success_url = reverse_lazy('main:index')
 
     def test_func(self):
+        """Функция для проверки является ли пользователь суперпользователем"""
         user = self.request.user
         if user.is_superuser:
             return True
