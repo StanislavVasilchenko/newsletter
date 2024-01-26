@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
-from secret_key import HOST_USER, HOST_PASSWORD, HOST
+from secret_key import HOST_USER, HOST_PASSWORD, HOST, BD_NAME, BD_USER
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,8 +83,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'newsletter',
-        'USER': 'postgres',
+        'NAME': BD_NAME,
+        'USER': BD_USER,
     }
 }
 
@@ -145,10 +145,9 @@ EMAIL_HOST_PASSWORD = HOST_PASSWORD
 EMAIL_USE_SSL = True
 
 CRONJOBS = [
-    # ('0 * * * *', 'main.cron.make_newsletter_hour'),
-    # ('0 12 * * *', 'main.cron.make_newsletter_day'),
-    # ('0 9 * * 1', 'main.cron..make_newsletter_week'),
-    ('*/1 * * * *', 'main.cron.make_newsletter_hour'),
+    ('0 * * * *', 'main.cron.make_newsletter_hour'),
+    ('0 12 * * *', 'main.cron.make_newsletter_day'),
+    ('0 9 * * 1', 'main.cron..make_newsletter_week'),
 ]
 
 AUTH_USER_MODEL = 'users.User'

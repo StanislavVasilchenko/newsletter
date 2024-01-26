@@ -86,12 +86,6 @@ class UserListView(ManagerTestMixin, ListView):
         context_data['object_list'] = User.objects.filter(is_staff=False)
         return context_data
 
-    # def get_queryset(self):
-    #     """Функция для фильтрации запроса в БД"""
-    #     queryset = super().get_queryset()
-    #     queryset = queryset.filter(id=self.kwargs.get('pk'))
-    #     return queryset
-
 
 def user_activity(request, pk):
     """Функция для изменения поля is_active в True или False. Доступна только пользователю из группы manager"""
