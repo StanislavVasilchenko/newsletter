@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 
 from blog.forms import BlogForm
 from blog.models import Blog
+from blog.services import get_posts_from_blog
 
 
 class UserPassesMixin(UserPassesTestMixin):
@@ -19,6 +20,11 @@ class UserPassesMixin(UserPassesTestMixin):
 class BlogListView(ListView):
     model = Blog
     ordering = ['-pub_date']
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = get_posts_from_blog()
+        return context_data
 
 
 class BlogCreateView(LoginRequiredMixin, UserPassesMixin, CreateView):
