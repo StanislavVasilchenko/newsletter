@@ -5,6 +5,7 @@ from config import settings
 
 
 def get_cache_posts_from_blog():
+    """Функция для кэширования запроса статей из БД. Сортирует выборку по дате (убывание)"""
     if settings.CACHE_ENABLED:
         key = 'blog_posts'
         posts = cache.get(key)

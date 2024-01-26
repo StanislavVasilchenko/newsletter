@@ -15,17 +15,22 @@ class StyleMixin(forms.ModelForm):
 
 
 class ClientForm(StyleMixin):
+    """Форма клиента"""
+
     class Meta:
         model = Client
         exclude = ('user',)
 
 
 class MailDeliverySettingsForm(StyleMixin):
+    """Форма рассылки"""
+
     class Meta:
         model = MailDeliverySettings
         exclude = ('status', 'log', 'user')
 
     def clean_time_start(self):
+        """Проверяет что время начала рассылки больше текущего времени"""
         cleaned_data = self.cleaned_data['time_start']
         now = timezone.localtime(timezone.now())
         if cleaned_data < now:
@@ -33,22 +38,9 @@ class MailDeliverySettingsForm(StyleMixin):
         return cleaned_data
 
     def clean_time_stop(self):
+        """Проверяет что время окончания рассылки больше текущего времени"""
         cleaned_data = self.cleaned_data['time_stop']
         now = timezone.localtime(cleaned_data)
         if cleaned_data < now:
             raise forms.ValidationError('Время окончания не может быть меньше текущего времени')
         return cleaned_data
-
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     time_start = cleaned_data['time_start']
-    #     time_stop = cleaned_data['time_stop']
-    #     if time_start > time_stop:
-    #         raise forms.ValidationError('Время окончания не может быть меньше времени начала')
-    #     return cleaned_data
-
-
-class MailDeliverySettingsManagerForm(StyleMixin):
-    class Meta:
-        model = MailDeliverySettings
-        fields = ('status', 'name', 'user')
