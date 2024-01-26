@@ -1,10 +1,12 @@
 {% extends 'main/base.html' %}
 {% block content %}
-    <p class="d-inline-flex gap-1">
-        <a class="btn btn-success"  href="{% url 'main:create_client' %}" >
-            Добавить клиента
-        </a>
-    </p>
+    {% if not user.is_staff %}
+        <p class="d-inline-flex gap-1">
+            <a class="btn btn-success" href="{% url 'main:create_client' %}">
+                Добавить клиента
+            </a>
+        </p>
+    {% endif %}
 
     <table class="table">
         <thead>
@@ -20,7 +22,13 @@
             <tr>
 
                 <th scope="row">{{ forloop.counter }}</th>
-                <td><a href="{% url 'main:client_detail' object.pk %}">{{ object.full_name }}</a></td>
+
+                {% if not user.is_staff %}
+                    <td><a href="{% url 'main:client_detail' object.pk %}">{{ object.full_name }}</a></td>
+                {% else %}
+                    <td>{{ object.full_name }}</td>
+                {% endif %}
+
                 <td>{{ object.email }}</td>
                 <td>{{ object.comment }}</td>
 

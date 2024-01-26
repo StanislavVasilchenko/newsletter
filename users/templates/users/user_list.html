@@ -18,20 +18,36 @@
             <tr>
 
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ object.first_name }} {{ object.last_name }}</td>
+                {% if object.get_full_name %}
+                    <td>{{ object.get_full_name }}</td>
+                {% else %}
+                    <td>Не указанно</td>
+                {% endif %}
+
                 <td>{{ object.email }}</td>
-                <td>{{ object.phone_number }}</td>
-                <td>{{ object.is_active }}</td>
+
+                {% if object.phone_number %}
+                    <td>{{ object.phone_number }}</td>
+                {% else %}
+                    <td>Не указан</td>
+                {% endif %}
+
+                {% if object.is_active %}
+                    <td>Активный</td>
+                {% else %}
+                    <td>Деактивирован</td>
+                {% endif %}
+
                 {% if object.is_active %}
                     <td><a class="btn btn-danger"
-                            href="{% url 'users:user_active' object.pk %}">Деактивировать</a></td>
+                           href="{% url 'users:user_active' object.pk %}">Деактивировать</a></td>
                 {% else %}
                     <td><a class="btn btn-success"
-                            href="{% url 'users:user_active' object.pk %}">Активиоровать</a></td>
+                           href="{% url 'users:user_active' object.pk %}">Активиоровать</a></td>
                 {% endif %}
                 {% if user.is_superuser %}
                     <td><a class="btn btn-success"
-                            href="{% url 'users:user_delete' object.pk %}">Удалить</a></td>
+                           href="{% url 'users:user_delete' object.pk %}">Удалить</a></td>
                 {% endif %}
 
             </tr>

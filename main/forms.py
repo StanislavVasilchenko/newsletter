@@ -4,13 +4,23 @@ from django.utils import timezone
 from main.models import Client, MailDeliverySettings
 
 
-class ClientForm(forms.ModelForm):
+class StyleMixin(forms.ModelForm):
+    """Класс миксин для общего стиля форм"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if not isinstance(field, forms.BooleanField):
+                field.widget.attrs['class'] = 'form-control'
+
+
+class ClientForm(StyleMixin):
     class Meta:
         model = Client
         exclude = ('user',)
 
 
-class MailDeliverySettingsForm(forms.ModelForm):
+class MailDeliverySettingsForm(StyleMixin):
     class Meta:
         model = MailDeliverySettings
         exclude = ('status', 'log', 'user')
@@ -38,7 +48,7 @@ class MailDeliverySettingsForm(forms.ModelForm):
     #     return cleaned_data
 
 
-class MailDeliverySettingsManagerForm(forms.ModelForm):
+class MailDeliverySettingsManagerForm(StyleMixin):
     class Meta:
         model = MailDeliverySettings
         fields = ('status', 'name', 'user')

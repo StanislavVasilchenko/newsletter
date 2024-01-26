@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -5,7 +6,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 
 from blog.forms import BlogForm
 from blog.models import Blog
-from blog.services import get_posts_from_blog
+from blog.services import get_cache_posts_from_blog
 
 
 class UserPassesMixin(UserPassesTestMixin):
@@ -19,12 +20,17 @@ class UserPassesMixin(UserPassesTestMixin):
 
 class BlogListView(ListView):
     model = Blog
-    ordering = ['-pub_date']
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['object_list'] = get_posts_from_blog()
+        context_data['object_list'] = get_cache_posts_from_blog()
         return context_data
+
+
+@user_passes_test(lambda u: u.groups.filter(name='content_manager').exists())
+def not_activity_posts(request):
+    post = Blog.objects.filter(is_published=False).order_by('-pub_date')
+    return render(request, 'blog/blog_list.html', {'object_list': post})
 
 
 class BlogCreateView(LoginRequiredMixin, UserPassesMixin, CreateView):

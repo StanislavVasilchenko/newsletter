@@ -26,6 +26,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data()
+        context_data['title'] = 'Рассылочка'
         user = self.request.user
         if user.is_authenticated and not user.is_staff:
             context_data.update(get_context_data_for_user(user))
@@ -99,23 +100,6 @@ class MailDeliverySettingsCreateView(LoginRequiredMixin, CreateView):
         new_newsletter.user = self.request.user
         new_newsletter.save()
         return super().form_valid(form)
-
-    # def form_valid(self, form):
-    #     if form.is_valid():
-    #         try:
-    #             response = send_mail(
-    #                 subject='Пробное',
-    #                 message='Привет',
-    #                 from_email='stanislav.vasilchenko@yandex.ru',
-    #                 recipient_list=('stanislav.vasilchenko@mm.ru',),
-    #                 fail_silently=False,
-    #             )
-    #             print(response)
-    #         except Exception as e:
-    #             print(e)
-    #         # self.object.status = MailDeliverySettings.LAUNCHED
-    #         # self.object.save()
-    #     return super().form_valid(form)
 
 
 class MailDeliverySettingsDetailView(LoginRequiredMixin, UserPassesMixin, DetailView):

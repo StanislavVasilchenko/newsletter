@@ -9,7 +9,7 @@ def get_context_data_for_user(user):
         'active_newsletters_count': MailDeliverySettings.objects.filter(user_id=user, status='Запущена').count(),
         'create_newsletters_count': MailDeliverySettings.objects.filter(user_id=user, status='Создана').count(),
         'ended_newsletters_count': MailDeliverySettings.objects.filter(user_id=user, status='Завершена').count(),
-        'blog_list': Blog.objects.all().order_by('-pub_date')[:3]
+        'blog_list': Blog.objects.filter(is_published=True).order_by('-pub_date')[:3]
     }
     return context_data
 
@@ -21,6 +21,6 @@ def get_context_data_for_manager():
         'active_newsletters_count': MailDeliverySettings.objects.all().filter(status='Запущена').count(),
         'create_newsletters_count': MailDeliverySettings.objects.all().filter(status='Создана').count(),
         'ended_newsletters_count': MailDeliverySettings.objects.all().filter(status='Завершена').count(),
-        'blog_list': Blog.objects.all().order_by('-pub_date')[:3]
+        'blog_list': Blog.objects.filter(is_published=True).order_by('-pub_date')[:3]
     }
     return context_data

@@ -15,7 +15,7 @@
             {% if user.is_staff %}
                 <a class="btn btn-primary" href="{% url 'users:view_users' %}">Пользователи</a>
             {% else %}
-                <a class="btn btn-primary" href="{% url 'users:profile' %}">Профиль</a>
+                <a class="btn btn-primary" href="{% url 'users:detail' %}">Профиль</a>
             {% endif %}
         {% else %}
             <a class="btn btn-primary" href="{% url 'users:login' %}">Вход</a>
@@ -26,8 +26,6 @@
 </div>
 
 <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-    <h1 class="display-4 fw-normal text-body-emphasis">Pricing</h1>
-    <p class="fs-5 text-body-secondary">Quickly build an effective pricing table for your potential customers
-        with this Bootstrap example. It’s built with default Bootstrap components and utilities with little
-        customization.</p>
+    <h1 class="display-4 fw-normal text-body-emphasis">Рассылочка</h1>
+    <p class="fs-5 text-body-secondary">На нашем сайте вы можете создать периодичную рассылку для своих клиентов</p>
 </div>

@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
 
+from main.forms import StyleMixin
 from users.models import User
 
 
@@ -19,9 +20,3 @@ class UserProfileForm(UserChangeForm):
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name', 'phone_number', 'avatar',)
-
-
-class ManagerViewForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = '__all__'

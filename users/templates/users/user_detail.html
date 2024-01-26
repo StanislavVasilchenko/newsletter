@@ -19,10 +19,15 @@
             {% else %}
                 <td>Не указан</td>
             {% endif %}
-            <td><img src="/media/{{ object.avatar }}" alt="Card image app"></td>
+            {% if object.avatar %}
+                <td><img src="/media/{{ object.avatar }}" alt="Card image app"></td>
+            {% else %}
+                <td>Фото отсутствует</td>
+            {% endif %}
             {% if not user.is_staff %}
                 <td><a href="{% url 'users:profile' %}">Изменить</a></td>
-                <td><a href="{% url 'users:user_delete' object.pk %}">Удалить</a></td>
+            {% else %}
+                <td><a href="{% url 'users:user_delete' %}">Удалить</a></td>
             {% endif %}
         </tr>
         </tbody>
