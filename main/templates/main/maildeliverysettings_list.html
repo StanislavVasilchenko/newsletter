@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    {% if not user.is_staff %}
+    <p class="d-inline-flex gap-1">
+        <a class="btn btn-success" href="{% url 'main:newsletter_create' %}">
+            Добавить рассылку
+        </a>
+    </p>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название рассылки</th>
+            <th scope="col">Сообщение</th>
+            <th scope="col">Статус</th>
+            {% if user.is_staff %}
+                <th>Пользователь</th>
+            {% endif %}
+            <th scope="col">Логи</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="{% url 'main:newsletter_detail' object.pk %}">{{ object.name }}</a></td>
+                <td>{{ object.message }}</td>
+                <td>{{ object.status }}</td>
+                {% if user.is_staff %}
+                    <td>{{ object.user }}</td>
+                {% endif %}
+                <td><a href="{% url 'main:log_list' object.pk %}">Логи</a></td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">ФИО</th>
+            <th scope="col">email</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Изменить статус</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+
+                <th scope="row">{{ forloop.counter }}</th>
+                {% if object.get_full_name %}
+                    <td>{{ object.get_full_name }}</td>
+                {% else %}
+                    <td>Не указанно</td>
+                {% endif %}
+
+                <td>{{ object.email }}</td>
+
+                {% if object.phone_number %}
+                    <td>{{ object.phone_number }}</td>
+                {% else %}
+                    <td>Не указан</td>
+                {% endif %}
+
+                {% if object.is_active %}
+                    <td>Активный</td>
+                {% else %}
+                    <td>Деактивирован</td>
+                {% endif %}
+
+                {% if object.is_active %}
+                    <td><a class="btn btn-danger"
+                           href="{% url 'users:user_active' object.pk %}">Деактивировать</a></td>
+                {% else %}
+                    <td><a class="btn btn-success"
+                           href="{% url 'users:user_active' object.pk %}">Активиоровать</a></td>
+                {% endif %}
+                {% if user.is_superuser %}
+                    <td><a class="btn btn-success"
+                           href="{% url 'users:user_delete' object.pk %}">Удалить</a></td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

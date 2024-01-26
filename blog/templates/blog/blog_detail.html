@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% block content %}
+    {% if perms.blog.change_blog %}
+        <p class="d-inline-flex gap-1">
+            <a class="btn btn-success" href="{% url 'blog:blog_update' object.pk %}">
+                Редактировать статью
+            </a>
+        </p>
+        <p class="d-inline-flex gap-1">
+            <a class="btn btn-danger" href="{% url 'blog:blog_delete' object.pk %}">
+                Удалить статью
+            </a>
+        </p>
+    {% endif %}
+
+    <div class="col-12 text-center">
+        <div class="card mb-4 rounded-3 shadow-sm border-primary">
+            <div class="card-header py-3 text-bg-primary border-primary">
+                <h4 class="my-0 fw-normal">{{ object.title }}</h4>
+            </div>
+            <div class="card-body">
+                <img src="/media/{{ object.image }}" alt="Card image app">
+                <p>{{ object.content }}</p>
+
+            </div>
+            <p>Кол-во просмотров - {{ object.views }}</p>
+        </div>
+    </div>
+{% endblock %}
