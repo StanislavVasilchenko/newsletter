@@ -56,7 +56,7 @@ class UserVerifyView(TemplateView):
         return render(request, 'users/verify_err.html')
 
 
-class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
 
     def get_object(self, queryset=None):
@@ -64,12 +64,6 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if user.groups.filter(name='manager').exists():
             return User.objects.filter(email=self.request.GET.get('email')).first()
         return user
-
-    def test_func(self):
-        user = self.request.user
-        if not user:
-            return False
-        return True
 
 
 class UserListView(ManagerTestMixin, ListView):
@@ -84,7 +78,6 @@ class UserListView(ManagerTestMixin, ListView):
         queryset = super().get_queryset()
         queryset = queryset.filter(id=self.kwargs.get('pk'))
         return queryset
-
 
 
 def user_activity(request, pk):
