@@ -147,7 +147,7 @@ EMAIL_USE_SSL = True
 CRONJOBS = [
     ('0 * * * *', 'main.cron.make_newsletter_hour'),
     ('0 12 * * *', 'main.cron.make_newsletter_day'),
-    ('0 9 * * 1', 'main.cron..make_newsletter_week'),
+    ('0 9 * * 1', 'main.cron.make_newsletter_week'),
 ]
 
 AUTH_USER_MODEL = 'users.User'
